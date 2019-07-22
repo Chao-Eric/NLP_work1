@@ -1,22 +1,16 @@
-import requests
 import re
-from bs4 import BeautifulSoup
 import nltk
-from nltk import FreqDist
-from nltk.corpus import stopwords
-from sklearn.metrics.pairwise import cosine_similarity
+import preprocess as pre
 url='https://www.concordmonitor.com/Trump-ask-Americans-to-stay-true-to-our-cause-26770267'
-res=requests.get(url)
-soup=BeautifulSoup(res.text)
+soup=pre.get_cont(url)
 tmp=''
 for text in soup.select('#articlebody p'):
     tmp+=text.get_text()
-formal = re.sub('[^A-Za-z0-9]', ' ', tmp)
+formal = pre.formalized_eng(tmp)
 print(formal)
 tokenized=nltk.word_tokenize(formal)
 print(tokenized)
-stopwords = nltk.corpus.stopwords.words('english')
-content = [w for w in tokenized if w.lower() not in stopwords]
+content = pre.extract_stop_word(tokenized)
 print(content)
 fdist = nltk.FreqDist(content)
 fdist.plot(30)
